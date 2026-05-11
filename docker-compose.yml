@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - usuarios_data:/var/lib/postgresql/data
+    networks:
+      - ss-net
     
   usuarios-service:
     build: .
@@ -26,5 +28,11 @@ services:
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET} 
       JWT_SECRET: ${JWT_SECRET}
+    networks:
+      - ss-net
 volumes:
   usuarios_data:     
+networks:
+  ss-net:
+    external: true
+

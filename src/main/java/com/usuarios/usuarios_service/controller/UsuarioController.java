@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.usuarios.usuarios_service.dto.CompletarPerfilDTO;
 import com.usuarios.usuarios_service.dto.CreacionUsuarioDTO;
@@ -25,6 +27,7 @@ import com.usuarios.usuarios_service.security.JwtService;
 import com.usuarios.usuarios_service.service.UsuarioOAuthService;
 import com.usuarios.usuarios_service.service.UsuarioService;
 
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +36,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UsuarioController {
 
+    @Value("${app.frontUrl}")
+    private String frontUrl;
     private final UsuarioService usuServ;
     private final UsuarioOAuthService usuarioOAuthService;
     private final JwtService jwtServ;
@@ -46,24 +51,19 @@ public class UsuarioController {
     }
 
     @GetMapping("/oauth-success")
-    public RespuestaLoginDTO oauthSuccess(
+    public RedirectView oauthSuccess(
             @AuthenticationPrincipal OAuth2User usuarioOAuth) {
         Usuario usuario = usuarioOAuthService.procesarUsuarioGoogle(usuarioOAuth);
 
         String token = jwtServ.generarToken(usuario);
 
-        return new RespuestaLoginDTO(
-                token,
-                UsuarioMapper.respuesta(usuario));
+        return new RedirectView(
+                frontUrl + "/?token=" + token);
     }
 
     @GetMapping("/me")
     public RespuestaUsuarioDTO obtenerUsuarioActual(
             Authentication auth) {
-
-        System.out.println("Auth: " + auth);
-        System.out.println("Princial: " + auth.getPrincipal());
-        System.out.println("Clase Principal: " + auth.getPrincipal().getClass());
 
         if(auth == null || !auth.isAuthenticated()){
             throw new RuntimeException("Usuario no autenticado");

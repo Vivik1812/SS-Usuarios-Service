@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.usuarios.usuarios_service.security.JwtAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -25,40 +26,44 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-				.cors(cors -> {})
+				.cors(cors -> {
+				})
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
 
 						// Permite el login con google
 						.requestMatchers(
 								"/login/**",
-								"/oauth2/**")
+								"/oauth2/**",
+								"/actuator/**",
+								"/api/v1/usuarios/oauth-success")
 						.permitAll()
 
 						.requestMatchers(
-							"/api/v1/usuarios/oauth-success",
-							"/api/v1/usuarios/me",
-							"/api/v1/usuarios/completar-perfil"
-						).authenticated()
+								"/api/v1/usuarios/me",
+								"/api/v1/usuarios/completar/perfil")
+						.authenticated()
 
 						.requestMatchers(
-							"/api/v1/usuarios",
-							"/api/v1/usuarios/**"
-						).hasRole("ADMIN")
+								"/api/v1/usuarios",
+								"/api/v1/usuarios/**")
+						.hasRole("ADMIN")
 
 						// Esta protege todos los demas endpoints
 						.anyRequest().authenticated())
+						.exceptionHandling(ex -> ex
+							.authenticationEntryPoint((request, response, authException) ->{
+								response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+							})
+						)
 				// Se habilita el OAuth2 Login y despues redirecciona
 				.oauth2Login(oauth2 -> oauth2
 						.defaultSuccessUrl(
 								frontUrl,
-								true
-						)
-				)
+								true))
 				.addFilterBefore(
-					jwtAuthFilter,
-					UsernamePasswordAuthenticationFilter.class
-				);
+						jwtAuthFilter,
+						UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

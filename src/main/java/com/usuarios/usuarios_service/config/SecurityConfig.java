@@ -57,7 +57,7 @@ public class SecurityConfig {
 							})
 						)
 				// Se habilita el OAuth2 Login y despues redirecciona
-				.oauth2Login(oauth2 -> oauth2
+				.oauth2Login(oauth2 -> oauth2)
 						// .defaultSuccessUrl(
 						// 		frontUrl,
 						// 		true))

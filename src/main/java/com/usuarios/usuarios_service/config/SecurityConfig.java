@@ -31,7 +31,7 @@ public class SecurityConfig {
 				})
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll(=
+						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
 						// Permite el login con google
 						.requestMatchers(

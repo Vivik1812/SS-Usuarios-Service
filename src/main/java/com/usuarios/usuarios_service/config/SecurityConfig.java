@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	@Value("${app.gw_rul}")
+	@Value("${app.gw_url}")
 	private String GW_URL;
 	private final JwtAuthenticationFilter jwtAuthFilter;
 

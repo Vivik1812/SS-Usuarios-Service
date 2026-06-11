@@ -20,8 +20,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-	@Value("${app.gw_url}")
-	private String GW_URL;
+ 	@Value("$app.frontUrl")
+	private String FRONT_URL;
+
 	private final JwtAuthenticationFilter jwtAuthFilter;
 
 	@Bean
@@ -61,7 +62,7 @@ public class SecurityConfig {
 				// Se habilita el OAuth2 Login y despues redirecciona
 				.oauth2Login(oauth2 -> oauth2
 						.defaultSuccessUrl(
-								GW_URL,
+								FRONT_URL,
 								true))
 				.addFilterBefore(
 						jwtAuthFilter,

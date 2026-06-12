@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
- 	@Value("$app.frontUrl")
+ 	@Value("${app.frontUrl}")
 	private String FRONT_URL;
 
 	private final JwtAuthenticationFilter jwtAuthFilter;

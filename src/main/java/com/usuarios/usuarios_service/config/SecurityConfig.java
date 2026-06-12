@@ -62,8 +62,7 @@ public class SecurityConfig {
 				// Se habilita el OAuth2 Login y despues redirecciona
 				.oauth2Login(oauth2 -> oauth2
 						.defaultSuccessUrl(
-								FRONT_URL,
-								true))
+								"/api/v1/usuarios/oauth-success"))
 				.addFilterBefore(
 						jwtAuthFilter,
 						UsernamePasswordAuthenticationFilter.class);

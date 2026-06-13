@@ -48,9 +48,14 @@ public class UsuarioController {
     @GetMapping("/oauth-success")
     public RedirectView oauthSuccess(
             @AuthenticationPrincipal OAuth2User usuarioOAuth) {
-        Usuario usuario = usuarioOAuthService.procesarUsuarioGoogle(usuarioOAuth);
+        
+        System.out.println("=====OAUTH SUCCESS======");
+        System.out.println(usuarioOAuth);
 
+        Usuario usuario = usuarioOAuthService.procesarUsuarioGoogle(usuarioOAuth);
+        
         String token = jwtServ.generarToken(usuario);
+        System.out.println("Token Generado");
 
         return new RedirectView(
                 frontUrl + "/autenticacion?token=" + token);

@@ -53,7 +53,7 @@ public class UsuarioController {
         String token = jwtServ.generarToken(usuario);
 
         return new RedirectView(
-                frontUrl + "/?token=" + token);
+                frontUrl + "/autenticacion?token=" + token);
     }
 
     @GetMapping("/me")

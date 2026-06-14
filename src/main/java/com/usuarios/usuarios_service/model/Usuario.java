@@ -54,7 +54,6 @@ public class Usuario {
     @Column(nullable = false)
     private String nombre;
 
-    @NotBlank
     @Size(max = 50)
     @Column(nullable = false)
     private String apellido;

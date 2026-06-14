@@ -20,17 +20,16 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 @RequiredArgsConstructor
 public class UsuarioOAuthService {
-    
+
     private final UsuarioRepository usuRepo;
     private final RolRepository rolRepo;
 
-    public Usuario procesarUsuarioGoogle(OAuth2User usuarioOAuth){
+    public Usuario procesarUsuarioGoogle(OAuth2User usuarioOAuth) {
         String googleId = usuarioOAuth.getAttribute("sub");
 
-        Optional<Usuario> usuarioExistente =
-            usuRepo.findByGoogleId(googleId);
+        Optional<Usuario> usuarioExistente = usuRepo.findByGoogleId(googleId);
 
-        if(usuarioExistente.isPresent()){
+        if (usuarioExistente.isPresent()) {
             return usuarioExistente.get();
         }
 
@@ -39,13 +38,17 @@ public class UsuarioOAuthService {
         usuario.setGoogleId(googleId);
         usuario.setCorreo(usuarioOAuth.getAttribute("email"));
         usuario.setNombre(usuarioOAuth.getAttribute("given_name"));
-        usuario.setApellido(usuarioOAuth.getAttribute("family_name"));
+        String apellido = usuarioOAuth.getAttribute("family_name");
 
+        usuario.setApellido(
+                apellido != null && !apellido.isBlank()
+                        ? apellido
+                        : "Sin apellido");
         usuario.setPerfilCompleto(false);
 
         Rol rolUsuario = rolRepo
-            .findByNombre("ROLE_USER")
-            .orElseThrow();
+                .findByNombre("ROLE_USER")
+                .orElseThrow();
 
         Set<Rol> roles = new HashSet<>();
         roles.add(rolUsuario);
@@ -56,21 +59,20 @@ public class UsuarioOAuthService {
     }
 
     public Usuario completarPerfil(
-        OAuth2User usuarioOAuth,
-        CompletarPerfilDTO dto
-    ){
+            OAuth2User usuarioOAuth,
+            CompletarPerfilDTO dto) {
         String googleId = usuarioOAuth.getAttribute("sub");
 
-
         Usuario usuario = usuRepo
-            .findByGoogleId(googleId)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));;
+                .findByGoogleId(googleId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        ;
 
-        if(Boolean.TRUE.equals(usuario.getPerfilCompleto())){
+        if (Boolean.TRUE.equals(usuario.getPerfilCompleto())) {
             throw new RuntimeException("El perfil ya esta completo");
         }
 
-        if(usuRepo.existsByRut(dto.getRut())){
+        if (usuRepo.existsByRut(dto.getRut())) {
             throw new RuntimeException("El RUT ya esta registrado");
         }
 
@@ -81,10 +83,10 @@ public class UsuarioOAuthService {
         return usuRepo.save(usuario);
     }
 
-    public Usuario obtenerUsuarioActual(OAuth2User usuarioOAuth){
+    public Usuario obtenerUsuarioActual(OAuth2User usuarioOAuth) {
         String googleId = usuarioOAuth.getAttribute("sub");
 
         return usuRepo.findByGoogleId(googleId)
-            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 }

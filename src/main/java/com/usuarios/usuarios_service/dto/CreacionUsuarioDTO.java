@@ -21,7 +21,6 @@ public class CreacionUsuarioDTO {
     @Size(max = 50)
     private String nombre;
 
-    @NotBlank
     @Size(max = 50)
     private String apellido;
 
